@@ -106,14 +106,24 @@ const Form = () => {
   // SEARCH: case-insensitive substring match on ename
   const search = (e) => {
     const q = (e.target.value || '').trim().toLowerCase();
+    
     if (!q) {
       setList(masterList); // empty query => restore full list
       return;
+    } else {
+      const filtered = masterList.filter((val) =>{
+        
+        if(String(val.ename || '').toLowerCase().includes(q)){
+          return val;
+        }else if(String(val.esalary || '').toLowerCase().includes(q)){
+          return val;
+        }else if(String(val.city || '').toLowerCase().includes(q)){
+          return val;
+        }
+      });
+      setList(filtered);
     }
-    const filtered = masterList.filter((val) =>
-      String(val.ename || '').toLowerCase().includes(q)
-    );
-    setList(filtered);
+
   };
 
   return (
@@ -219,7 +229,7 @@ const Form = () => {
           </div>
 
           {/* SEARCH INPUT */}
-          <input className="mt-3 form-control" placeholder="Search Data" type="text" onChange={search} />
+          <input className="mt-3 form-control" placeholder="Search Data" type="search" onChange={search} />
 
           {/* TABLE */}
           <div className="card-ish mt-4">
