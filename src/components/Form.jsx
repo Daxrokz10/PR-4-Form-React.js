@@ -15,6 +15,15 @@ const Form = () => {
   const [editId, setEditId] = useState(null);
   const [mount, setMount] = useState(false);
 
+  //pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemPerPage = 4;
+  const indexOfLastItem = currentPage * itemPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemPerPage;
+  const currentItems = list.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(list.length / itemPerPage);
+  
+
   useEffect(() => {
     const oldData = JSON.parse(localStorage.getItem('list')) || [];
     setMasterList(oldData);
@@ -106,18 +115,18 @@ const Form = () => {
   // SEARCH: case-insensitive substring match on ename
   const search = (e) => {
     const q = (e.target.value || '').trim().toLowerCase();
-    
+
     if (!q) {
       setList(masterList); // empty query => restore full list
       return;
     } else {
-      const filtered = masterList.filter((val) =>{
-        
-        if(String(val.ename || '').toLowerCase().includes(q)){
+      const filtered = masterList.filter((val) => {
+
+        if (String(val.ename || '').toLowerCase().includes(q)) {
           return val;
-        }else if(String(val.esalary || '').toLowerCase().includes(q)){
+        } else if (String(val.esalary || '').toLowerCase().includes(q)) {
           return val;
-        }else if(String(val.city || '').toLowerCase().includes(q)){
+        } else if (String(val.city || '').toLowerCase().includes(q)) {
           return val;
         }
       });
@@ -125,6 +134,10 @@ const Form = () => {
     }
 
   };
+
+  const handlePagination = (index) => {
+    setCurrentPage(index+1);
+  }
 
   return (
     <div className="container my-app-wrap">
@@ -249,8 +262,8 @@ const Form = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {list.length !== 0 ? (
-                    list.map((employee, index) => (
+                  {currentItems.length !== 0 ? (
+                    currentItems.map((employee, index) => (
                       <tr key={employee.id}>
                         <td>{index + 1}</td>
                         <td>{employee.ename}</td>
@@ -274,7 +287,17 @@ const Form = () => {
               </table>
             </div>
           </div>
-
+          <div className="row justify-content-center mt-2 mb-5 ">
+            <div className="col-12 d-flex">
+              {
+              [...Array(totalPages)].map((_, index) => {
+                return(
+                  <button onClick={() => handlePagination(index)} className='btn btn-primary'>{index + 1}</button>
+                )
+              })
+              }
+            </div>
+          </div>
         </div>
       </div>
     </div>
